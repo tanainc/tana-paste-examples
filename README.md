@@ -4,6 +4,12 @@
 
 Tana Paste is a special text format that is parsed by Tana, and generates rich Tana structures when pasted normally. All text is preceded by `%%tana%%` to trigger this special functionality. More details about the format [in the help center](https://be.tana.inc?nodeid=83JNrPSOgO).
 
+https://www.loom.com/share/6fd81ff1ab364acf9f448ffdedfeb57f
+
+<a href="https://www.loom.com/share/6fd81ff1ab364acf9f448ffdedfeb57f">
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6fd81ff1ab364acf9f448ffdedfeb57f-1662622743605-with-play.gif" />
+ </a>
+  
 All these scripts are provided solely as examples/inspiration. Feel free to modify, or use as templates to explore other sources of data. If you have interesting improvements or new scripts, we welcome pull requests.
 
 You can run these scripts normally to inspect the output, but we recommend piping to pbcopy on Mac or similar tools to put the text directly on the clipboard for use with Tana. These scripts an also be launched automatically by tools like Keyboard Maestro.
