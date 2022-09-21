@@ -19,9 +19,10 @@
       Zotero.write('- ' + item.title + ' #publication\n');
   
       // author
-      Zotero.write('  - Authored by:: ');
+      Zotero.write('  - Authored by:: \n');
+      // write authors as indented nodes
       for (author in item.creators){
-        Zotero.write('[[' + (item.creators[author].firstName||'') + ' ' + (item.creators[author].lastName||'') + ']] ');
+        Zotero.write('    - [[' + (item.creators[author].firstName||'') + ' ' + (item.creators[author].lastName||'') + ']]\n');
       }
       Zotero.write('\n');
    
