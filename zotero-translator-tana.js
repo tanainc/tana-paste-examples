@@ -20,8 +20,13 @@
   
       // author
       Zotero.write('  - Authored by:: ');
+      // write first author to field
+      Zotero.write('[[' + (item.creators[0].firstName||'') + ' ' + (item.creators[0].lastName||'') + ']] \n');
+      // remove first author from list
+      item.creators.shift()
+      // write remaining authors as indented nodes
       for (author in item.creators){
-        Zotero.write('[[' + (item.creators[author].firstName||'') + ' ' + (item.creators[author].lastName||'') + ']] ');
+        Zotero.write('    - [[' + (item.creators[author].firstName||'') + ' ' + (item.creators[author].lastName||'') + ']]\n');
       }
       Zotero.write('\n');
    
