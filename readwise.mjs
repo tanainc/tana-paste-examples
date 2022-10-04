@@ -18,8 +18,8 @@ const getItemsFromReadwise = async (daysToFetch = 1) => {
   );
   const data = await response.json();
   data.results.forEach((book) => {
-    const isValidSourceURL = book.source_url.startsWith("https://");
-    const hasHighlights = book.highlights.length > 0;
+    const isValidSourceURL = book.source_url?.startsWith("https://");
+    const hasHighlights = book.highlights?.length > 0;
 
     console.log(`- ${book.title} #from-the-web`);
     if (isValidSourceURL) {
