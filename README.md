@@ -37,4 +37,6 @@ You can run these scripts normally to inspect the output, but we recommend pipin
 - zotero-translator-tana.js
   - can be moved to the Zotero/Translations folder, and used to copy bibliography elements out of Zotero into Tana
   - ![image](https://user-images.githubusercontent.com/61575/188881053-dfdab35a-b24b-4d48-9556-5ad00c34c208.png)
-
+- readwise.mjs [days (x)]
+  - fetches highlights taken in the last x days from Readwise
+  - ![image](https://user-images.githubusercontent.com/8036315/193777925-f9de1f80-c755-4ffd-a2d1-0e9125795f7b.png)

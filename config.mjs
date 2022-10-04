@@ -7,4 +7,5 @@ export const config = {
     access_token: "ACCESS_TOKEN",
     access_token_secret: "ACCESS_TOKEN_SECRET",
   },
+  readwiseToken: "READWISE_TOKEN",
 };
