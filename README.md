@@ -2,7 +2,7 @@
 
 ## Example scripts that generate Tana Paste output
 
-Tana Paste is a special text format that is parsed by Tana, and generates rich Tana structures when pasted normally. All text is preceded by `%%tana%%` to trigger this special functionality. More details about the format [in the help center](https://be.tana.inc?nodeid=83JNrPSOgO).
+Tana Paste is a special text format that is parsed by Tana, and generates rich Tana structures when pasted normally. All text is preceded by `%%tana%%` to trigger this special functionality. More details about the format [in the help center](https://help.tana.inc/build-tutorials/tana-paste.html).
 
 https://www.loom.com/share/6fd81ff1ab364acf9f448ffdedfeb57f
 
