@@ -40,3 +40,11 @@ You can run these scripts normally to inspect the output, but we recommend pipin
 - readwise.mjs [days (x)]
   - fetches highlights taken in the last x days from Readwise
   - ![image](https://user-images.githubusercontent.com/8036315/193777925-f9de1f80-c755-4ffd-a2d1-0e9125795f7b.png)
+
+### External Scripts
+
+- [macOS Calendar->Tana](https://github.com/willplatnick/calendar-tana)
+  - macOS only. Fetches calendar events happening today from macOS Calendar app.
+- [Things 3->Tana](https://github.com/willplatnick/things-tana)
+  - macOS only. Fetches tasks due today from Things 3.
+  
