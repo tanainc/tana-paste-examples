@@ -25,14 +25,21 @@ const getItemsFromReadwise = async (daysToFetch = 1) => {
     if (isValidSourceURL) {
       console.log(`  - URL:: ${book.source_url}`);
     }
-    console.log(`  - type:: ${book.category.replace(/s$/, "")}`);
+    console.log(`  - type:: ${book.category?.replace(/s$/, "")}`);
     console.log(`  - author:: ${book.author}`);
     if (hasHighlights) {
       console.log(`  - Highlights`);
     }
 
     book.highlights.forEach((highlight) => {
-      console.log(`    - ${highlight.text}`);
+      const lines = highlight.text.split("\n");
+      lines.forEach((line) => {
+        const cleanedLine = line.replace(/•\s+/, "").trim();
+        if (cleanedLine.length > 0) {
+          console.log(`    - ${cleanedLine}`);
+        }
+      });
+
       if (highlight.note) {
         console.log(`      - ${highlight.note}`);
       }
