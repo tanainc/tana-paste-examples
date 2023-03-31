@@ -37,6 +37,13 @@
     Example:
 
     ./getcalendar.swift -me "Brett Adam" -person "#people"
+
+    Calendar access authorization:
+
+    This script will produce empty results until your script runner is authorized to access
+    your calendar via Calendar.app
+
+    See the associated getcalendar.readme.md file for instructions.
 */
 
 import Foundation
@@ -123,7 +130,7 @@ struct Attendee: Codable {
 
 let eventStore = EKEventStore()
 
-// Ask for Calendar access, reset in casse we messed up earlier
+// Ask for Calendar access, reset in case we messed up earlier
 // See stackoverflow. 
 // IMPORTANT: you must grant Calendar access to whatever script runner
 // you are using. This can be tricky to pull off since you cannot do 
