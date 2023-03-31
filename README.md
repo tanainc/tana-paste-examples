@@ -40,6 +40,9 @@ You can run these scripts normally to inspect the output, but we recommend pipin
 - readwise.mjs [days (x)]
   - fetches highlights taken in the last x days from Readwise
   - ![image](https://user-images.githubusercontent.com/8036315/193777925-f9de1f80-c755-4ffd-a2d1-0e9125795f7b.png)
+- getcalendar.swift <multiple options>
+  - Executable script that fetches your calendar events for today from Apple Calendar app (and other calendars it sync with) and outputs a set of tana nodes including Attendees:: field, Start time:: and any notes. Provides some options for filtering unwanted events. See source for instructions.
+  
 
 ### External Scripts
 
