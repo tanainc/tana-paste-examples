@@ -1,42 +1,53 @@
 #!/usr/bin/swift
 
 /*
+
+*/
+
+import Foundation
+import EventKit
+
+func usage() {
+    fputs("""
     Simple script to grab calendar events via the Apple Calendar
     app, filter them and then format them as a tana-paste format
     blob of text. Use a keyboard macro accelerator or other
     mechanism to get this into Tana 
 
     If you run this from terminal you can do:
-
-    ./getcalendar | pbcopy
+        ./getcalendar | pbcopy
 
     And then simply paste the result into Tana.
 
-
     Accepts arguments, many of which should be quoted on the cmd line:
 
-    -calendar "name of calendar"  <default: Calendar >
+        -calendar "name of calendar"  <default: Calendar >
 
-    -me "name of yourself in meeting attendees"  <default: Me >
-    Script removes yourself from meeting attendees. If you leave it as default, 
-    you will be included since Calendar doesn't use "me" as a name anywhere
+        -me "name of yourself in meeting attendees"  <default: Me >
+        Script removes yourself from meeting attendees. If you leave it as default, 
+        you will be included since Calendar doesn't use "me" as a name anywhere
 
-    -ignore "event title to ignore"  (can be repeated)
+        -ignore "event title to ignore"  (can be repeated)
 
-    <starts out as defaults "Block", "Lunch", "DNS/Focus time",  "DNS/Lunch", "Focus time" >
+        <starts out as defaults "Block", "Lunch", "DNS/Focus time",  "DNS/Lunch", "Focus time" >
 
-    -solo (if present, include meetings with a single attendee)
+        -solo (if present, include meetings with a single attendee)
 
-    -one2one "#[[tag name for one2one meetings]]" <default #[[1:1]] >
+        -one2one "#[[tag name for one2one meetings]]" <default #[[1:1]] >
 
-    -meeting "#[[tag name for regular meetings]]" <default: #[[meeting]] >
+        -meeting "#[[tag name for regular meetings]]" <default: #[[meeting]] >
 
-    -person "#[[tag name for attendees]]" <default: #person >
+        -person "#[[tag name for attendees]]" <default: #person >
 
+        -offset <default 0>
+        Which day to query for. +1 means tomorrow, -1 mean yesterday
+
+        -range <default 1>
+        How many days to query for from offset.
 
     Example:
 
-    ./getcalendar.swift -me "Brett Adam" -person "#people"
+        ./getcalendar.swift -me "Brett Adam" -person "#people"
 
     Calendar access authorization:
 
@@ -44,10 +55,8 @@
     your calendar via Calendar.app
 
     See the associated getcalendar.readme.md file for instructions.
-*/
-
-import Foundation
-import EventKit
+    """, stdout)
+}
 
 // TODO: make these parameters somehow!
 var calendar_name = "Calendar"
@@ -58,11 +67,18 @@ var ignore_solo_meetings = true
 var meeting_tag = "#meeting"
 var one2one_tag = "#[[1:1]]"
 var person_tag = "#person"
+var day_offset:Int = 0
+var day_range = 1
 
 var next:String? = nil
 
 var args = CommandLine.arguments
 args.removeFirst()
+
+if args.count == 0 {
+    usage()
+    exit(1)
+}
 
 for argument in args {
     if next != nil {
@@ -81,6 +97,10 @@ for argument in args {
                 meeting_tag = argument
             case "-person":
                 person_tag = argument
+            case "-offset":
+                day_offset = Int(argument) ?? 0
+            case "-range":
+                day_range = Int(argument) ?? 1
             default:
                 fputs("Unknown argument " + next! + "\n", stderr)
                 exit(1)
@@ -89,6 +109,10 @@ for argument in args {
     }
     else {
         next = argument
+        if next == "-help" {
+            usage();
+            exit(0)
+        }
     }
 }
 
@@ -147,8 +171,8 @@ eventStore.requestAccess(to: .event) { (granted, error) in
 
 let today = Calendar.current.startOfDay(for: Date())
 
-let startDate = Calendar.current.date(byAdding: .day, value: 0, to: today)!
-let endDate = Calendar.current.date(byAdding: .day, value: +1, to: today)!
+let startDate = Calendar.current.date(byAdding: .day, value: 0 + day_offset, to: today)!
+let endDate = Calendar.current.date(byAdding: .day, value: day_range + day_offset, to: today)!
 
 let calendars = eventStore.calendars(for: .event )
 
