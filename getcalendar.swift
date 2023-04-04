@@ -7,8 +7,12 @@
 import Foundation
 import EventKit
 
-func usage() {
-    fputs("""
+var args = CommandLine.arguments
+let script_name = args[0]
+
+func help() {
+    fputs(
+"""
     Simple script to grab calendar events via the Apple Calendar
     app, filter them and then format them as a tana-paste format
     blob of text. Use a keyboard macro accelerator or other
@@ -45,6 +49,9 @@ func usage() {
         -range <default 1>
         How many days to query for from offset.
 
+        -json
+        Emit a JSON blob per event in addition to the other output as a Tana field
+
     Example:
 
         ./getcalendar.swift -me "Brett Adam" -person "#people"
@@ -58,11 +65,19 @@ func usage() {
     """, stdout)
 }
 
+func usage() {
+    print("Usage: \(script_name)\n")
+    help()
+    exit(1)
+}
+
+
 // TODO: make these parameters somehow!
 var calendar_name = "Calendar"
 var self_name = "Me"
 var titles_to_ignore = ["Block", "Lunch", "DNS/Focus time",  "DNS/Lunch", "Focus time" ]
 var ignore_solo_meetings = true
+var emit_json = false
 
 var meeting_tag = "#meeting"
 var one2one_tag = "#[[1:1]]"
@@ -72,15 +87,31 @@ var day_range = 1
 
 var next:String? = nil
 
-var args = CommandLine.arguments
-args.removeFirst()
-
-if args.count == 0 {
-    usage()
-    exit(1)
-}
-
+args.removeFirst() // strip command itself
 for argument in args {
+    if next == nil {
+        next = argument
+        // process zero-param toggles
+        if next != nil {
+            switch next {
+                case "-help":
+                    help()
+                    exit(0)
+                case "-solo":
+                    ignore_solo_meetings = false
+                    next = nil
+                    continue // get next arg
+                case "-json":
+                    emit_json = true
+                    next = nil
+                    continue // get next arg
+                default: 
+                    continue // move on to process arg
+            } 
+        }
+    }
+
+    // process the arg after the switch
     if next != nil {
         switch next {
             case "-calendar":
@@ -89,8 +120,6 @@ for argument in args {
                 self_name = argument
             case "-ignore":
                 titles_to_ignore.append(argument)
-            case "-solo":
-                ignore_solo_meetings = false
             case "-one2one":
                 one2one_tag = argument
             case "-meeting":
@@ -102,18 +131,16 @@ for argument in args {
             case "-range":
                 day_range = Int(argument) ?? 1
             default:
-                fputs("Unknown argument " + next! + "\n", stderr)
-                exit(1)
+                fputs("Unknown argument " + next! + "\n\n", stderr)
+                usage()
         }
         next = nil
     }
-    else {
-        next = argument
-        if next == "-help" {
-            usage();
-            exit(0)
-        }
-    }
+}
+
+if next != nil {
+    fputs("Missing argument for " + next! + "\n\n", stderr)
+    usage()
 }
 
 // tana-paste format to follow...
@@ -180,6 +207,8 @@ let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate
 
 let events = eventStore.events(matching: predicate)
 
+// process all of the evewnts
+
 // filter all the events we don't care about
 // and narrow to our single relevant calendar
 let filteredEvents = events.filter { event in
@@ -187,7 +216,8 @@ let filteredEvents = events.filter { event in
     && !titles_to_ignore.contains(event.title)
 }
 
-// Now map the event array to JSON strings
+// Now map the event array to our own internal structure
+// stripping off various aspects as we go along
 let eventArray = filteredEvents.map { event in
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd H:mm"
@@ -238,16 +268,26 @@ let eventArray = filteredEvents.map { event in
         )
 }
 
-
+// generate ouutput in tana-paste format
 for event in eventArray {
     var node_tag = meeting_tag
     var name = "- " + event.title + " with "
     var attendee_field = "  - Attendees:: \n"
     var count = 0
+    let num_attendees = event.attendees?.count ?? 0
+
+    if num_attendees >= 5 {
+        name = name + " (many people)"
+    }
+
     for attendee in event.attendees ?? [] {
         count += 1
-        name = name + " [[" + attendee.name + "]]"
         if attendee.name != self_name {
+            // don't put more than 5 people in the name of the meeting node
+            if num_attendees < 5 {
+                name = name + " [[" + attendee.name + "]]"
+            }
+
             attendee_field = attendee_field + "    - [[" + attendee.name + person_tag + "]]\n"
         }
         else {
@@ -268,7 +308,9 @@ for event in eventArray {
     print("  - Start time:: [[date:" + String(event.startDate) + "/" + String(event.endDate) + "]]")
     
     // spit out JSON for further examination or to feed RAW to some other API
-    // emitJSON(event:event);
+    if emit_json {
+        emitJSON(event:event)
+    }
 }
 
 // OLD JSON code if you want to see raw data
